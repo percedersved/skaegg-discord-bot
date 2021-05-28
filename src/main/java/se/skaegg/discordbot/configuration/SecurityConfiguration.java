@@ -42,7 +42,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET).permitAll()
-                .anyRequest().hasRole("GO")
+                .anyRequest().hasRole("admin")
                 .and()
                 .httpBasic();
     }
