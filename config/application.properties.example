@@ -1,0 +1,4 @@
+token=#Discord Bot Token
+logging.config=file:#Path to logback-spring.xml
+
+

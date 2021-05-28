@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+
+    <!-- Dir to store logs, in production, catalina.base should most likely be used -->
+    <property name="LOGS" value="./logs" />
+    <property name="FILE_NAME" value="bot" />
+    <property name="LOG_PATTERN_CONSOLE" value="%black(%d{ISO8601}) %highlight(%-5p) [%blue(%t)] %yellow(%C{1.}) - %msg%n%throwable" />
+    <property name="LOG_PATTERN_FILE" value="%d{ISO8601} %-5p [%t] %C{1.} - %msg%n%throwable" />
+
+    <appender name="CONSOLE"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                ${LOG_PATTERN_CONSOLE}
+            </Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ROLLING_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS}/${FILE_NAME}.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                ${LOG_PATTERN_FILE}
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS}/${FILE_NAME}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <totalSizeCap>3GB</totalSizeCap>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <root level="DEBUG">
+    <!--<appender-ref ref="ROLLING_FILE" />-->
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+    <!-- Add any specific loggers -->
+    <!--
+    <logger name="com.easit.integration" level="" additivity="false">
+        <appender-ref ref="ROLLING_FILE" />
+        <appender-ref ref="CONSOLE" />
+    </logger>
+    -->
+    <logger name="se.skaegg.discordbot" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE" />
+    </logger>
+    <logger name="org.apache.http" level="WARN"/>
+    <logger name="httpclient" level="WARN"/>
+
+</configuration>
