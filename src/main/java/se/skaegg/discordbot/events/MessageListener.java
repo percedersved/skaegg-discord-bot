@@ -3,12 +3,10 @@ package se.skaegg.discordbot.events;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import se.skaegg.discordbot.handlers.CodeNames;
-import se.skaegg.discordbot.handlers.Ping;
-import se.skaegg.discordbot.handlers.Teams;
-import se.skaegg.discordbot.handlers.TeamsVoice;
+import se.skaegg.discordbot.handlers.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +17,12 @@ import java.util.function.Supplier;
 public class MessageListener implements EventListener<MessageCreateEvent> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageListener.class);
+
+    @Value("${bolaget.openhours.storeid}")
+    String storeId;
+
+    @Value("${bolaget.api.token}")
+    String token;
 
     @Override
     public Class<MessageCreateEvent> getEventType() {
@@ -34,6 +38,7 @@ public class MessageListener implements EventListener<MessageCreateEvent> {
         commands.put("lag", () -> new Teams().process(event.getMessage()));
         commands.put("lagvoice", () -> new TeamsVoice().process(event.getMessage()));
         commands.put("codenames", () -> new CodeNames().process(event.getMessage()));
+        commands.put("bolagetöppet", () -> new BolagetOpeningHours(storeId, token).process(event.getMessage()));
 //        commands.put("bolaget", () -> new Bolaget().process(event.getMessage()));
 
         String lowerKeyEvent = event.getMessage().getContent().toLowerCase().replace("!", "");

@@ -51,6 +51,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20210307</version>
+		</dependency>
+		<dependency>
 			<groupId>com.discord4j</groupId>
 			<artifactId>discord4j-core</artifactId>
 			<version>3.2.0-M3</version>
@@ -79,12 +84,6 @@
 			<artifactId>javafx-controls</artifactId>
 			<version>16</version>
 		</dependency>
-
-
-
-
-
-
 	</dependencies>
 
 	<build>
