@@ -39,6 +39,7 @@ public class MessageListener implements EventListener<MessageCreateEvent> {
         commands.put("lagvoice", () -> new TeamsVoice().process(event.getMessage()));
         commands.put("codenames", () -> new CodeNames().process(event.getMessage()));
         commands.put("bolagetöppet", () -> new BolagetOpeningHours(storeId, token).process(event.getMessage()));
+        commands.put("hjälp", () -> new Help().process(event.getMessage()));
 //        commands.put("bolaget", () -> new Bolaget().process(event.getMessage()));
 
         String lowerKeyEvent = event.getMessage().getContent().toLowerCase().replace("!", "");
