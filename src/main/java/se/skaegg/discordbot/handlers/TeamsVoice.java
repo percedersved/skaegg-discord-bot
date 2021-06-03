@@ -47,7 +47,7 @@ public class TeamsVoice implements EventHandler {
                 .flatMap(channel -> {
                     if (teamRed.isBlank() || teamBlue.isBlank())
                     {
-                        return channel.createMessage("Tyvärr, Det är ingen som är i en röstkanal och vill leka :sadmudd::koerdittjaeklaboegrace:");
+                        return channel.createMessage("Tyvärr, Det är ingen som är i en röstkanal och vill leka <:sadmudd:780443021267042335><:koerdittjaeklaboegrace:814187249288872016>");
                     }
                     else {
                         return channel.createEmbed(spec ->
