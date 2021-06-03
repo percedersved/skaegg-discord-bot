@@ -81,11 +81,12 @@ public class BolagetOpeningHours implements EventHandler{
                 .filter(message -> message.getAuthor().map(user -> !user.isBot()).orElse(false))
                 .flatMap(Message::getChannel)
                 .flatMap(channel -> channel.createEmbed(spec ->
-                        spec.setColor(Color.CYAN)
-                        .setDescription(openingHoursString)
-                        .setTitle("Öppettider för Bollis i Norrtälje :beers:")))
-
-                        .then();
+                        spec.setColor(Color.of(90, 130, 180))
+                            .setDescription(openingHoursString)
+                            .setTitle("Öppettider för Bollis i Norrtälje :beers:")))
+                .onErrorResume(throwable -> eventMessage.getChannel()
+                        .flatMap(messageChannel -> messageChannel.createMessage("Äsch, nu kraschade nåt, Testa igen vettja!")))
+                .then();
 
     }
 

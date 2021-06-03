@@ -43,21 +43,23 @@ public class TeamsVoice implements EventHandler {
 
         return Mono.just(eventMessage)
                 .filter(message -> message.getAuthor().map(user -> !user.isBot()).orElse(false))
-                .flatMap(message -> {
-                    if (teamRed.isBlank() || teamBlue.isBlank()) {
-                        return message.getChannel().flatMap(messageChannel ->
-                                messageChannel.createMessage("Tyvärr, Det är ingen som är i en röstkanal och vill leka :sadmudd::koerdittjaeklaboegrace:"));
+                .flatMap(Message::getChannel)
+                .flatMap(channel -> {
+                    if (teamRed.isBlank() || teamBlue.isBlank())
+                    {
+                        return channel.createMessage("Tyvärr, Det är ingen som är i en röstkanal och vill leka :sadmudd::koerdittjaeklaboegrace:");
                     }
                     else {
-                        return message.getChannel().flatMap(channel ->
-                                channel.createEmbed(spec ->
-                                        spec.setColor(Color.CYAN)
-                                        .setImage(IMAGE_URL_TEAMS)
-                                        .addField("Lag Röd", teamRed, true)
-                                        .addField("Lag Blå", teamBlue, true)
-                                        .setTitle("Lag")));
+                        return channel.createEmbed(spec ->
+                                spec.setColor(Color.of(90, 130, 180))
+                                    .setImage(IMAGE_URL_TEAMS)
+                                    .addField("Lag Röd", teamRed, true)
+                                    .addField("Lag Blå", teamBlue, true)
+                                    .setTitle("Lag"));
                     }
                 })
+                .onErrorResume(throwable -> eventMessage.getChannel()
+                        .flatMap(messageChannel -> messageChannel.createMessage("Ooops nu gick något fel, Testa igen vettja!")))
                 .then();
 
     }

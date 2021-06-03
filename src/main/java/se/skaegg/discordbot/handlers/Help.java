@@ -13,14 +13,15 @@ public class Help implements EventHandler {
                 "!bolagetöppet - Öppettider för Bolaget i Norrtälje\n" +
                 "!codenames - Skapar en länk för Codenames på horsepaste.com\n" +
                 "!lag [Namn kommaseparerat] - Slumpar fram 2 lag utifrån namnen som angivits\n" +
-                "!lagvoice - Tar alla namn som är i någon voicekanal och slumpar 2 lag";
+                "!lagvoice - Tar alla namn som är i någon voicekanal och slumpar 2 lag\n" +
+                "!fredag - Är det fredag?";
 
         return Mono.just(eventMessage)
                 .filter(message -> message.getAuthor().map(user -> !user.isBot()).orElse(false))
                 .flatMap(Message::getChannel)
                 .flatMap(channel ->
                         channel.createEmbed(spec ->
-                                spec.setColor(Color.CYAN)
+                                spec.setColor(Color.of(90, 130, 180))
                                         .setTitle("Kommandorörelser")
                                         .setDescription(helpText))
                                 .then());

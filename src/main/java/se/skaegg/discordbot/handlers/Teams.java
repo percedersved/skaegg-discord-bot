@@ -25,12 +25,15 @@ public class Teams implements EventHandler{
                 .flatMap(Message::getChannel)
                 .flatMap(channel ->
                         channel.createEmbed(spec ->
-                                spec.setColor(Color.CYAN)
-                                .setImage(IMAGE_URL_TEAMS)
-                                .addField("----- Lag Röd -----", teamRed, true)
-                                .addField("----- Lag Blå -----", teamBlue, true)
-                                .setTitle("Lag"))
-                .then());
+                                spec.setColor(Color.of(90, 130, 180))
+                                    .setImage(IMAGE_URL_TEAMS)
+                                    .addField("----- Lag Röd -----", teamRed, true)
+                                    .addField("----- Lag Blå -----", teamBlue, true)
+                                    .setTitle("Lag")))
+                .onErrorResume(throwable -> eventMessage.getChannel()
+                        .flatMap(messageChannel -> messageChannel.createMessage("Ooops nu gick något fel, kanske angav du för få deltagare? Testa igen vettja!")))
+
+                .then();
     }
 
 
