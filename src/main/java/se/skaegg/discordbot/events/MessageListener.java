@@ -34,16 +34,16 @@ public class MessageListener implements EventListener<MessageCreateEvent> {
     public Mono<Void> execute(MessageCreateEvent event) {
 
         Map<String, Supplier<Mono<Void>>> commands = new HashMap<>();
-        commands.put("ping", () -> new Ping().process(event.getMessage()));
-        commands.put("lag", () -> new Teams().process(event.getMessage()));
-        commands.put("lagvoice", () -> new TeamsVoice().process(event.getMessage()));
-        commands.put("codenames", () -> new CodeNames().process(event.getMessage()));
-        commands.put("bolagetöppet", () -> new BolagetOpeningHours(storeId, token).process(event.getMessage()));
-        commands.put("hjälp", () -> new Help().process(event.getMessage()));
-        commands.put("fredag", () -> new Friday().process(event.getMessage()));
+        commands.put("!ping", () -> new Ping().process(event.getMessage()));
+        commands.put("!lag", () -> new Teams().process(event.getMessage()));
+        commands.put("!lagvoice", () -> new TeamsVoice().process(event.getMessage()));
+        commands.put("!codenames", () -> new CodeNames().process(event.getMessage()));
+        commands.put("!bolagetöppet", () -> new BolagetOpeningHours(storeId, token).process(event.getMessage()));
+        commands.put("!hjälp", () -> new Help().process(event.getMessage()));
+        commands.put("!fredag", () -> new Friday().process(event.getMessage()));
 //        commands.put("bolaget", () -> new Bolaget().process(event.getMessage()));
 
-        String lowerKeyEvent = event.getMessage().getContent().toLowerCase().replace("!", "");
+        String lowerKeyEvent = event.getMessage().getContent().toLowerCase();
 
         if (lowerKeyEvent.contains(" ")) {
             int spaceIndex = lowerKeyEvent.indexOf(" ");
