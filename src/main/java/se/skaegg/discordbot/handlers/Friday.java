@@ -1,8 +1,15 @@
 package se.skaegg.discordbot.handlers;
 
+import discord4j.common.util.Snowflake;
+import discord4j.core.GatewayDiscordClient;
+import discord4j.core.object.entity.GuildEmoji;
 import discord4j.core.object.entity.Message;
+import discord4j.core.object.reaction.ReactionEmoji;
+import discord4j.discordjson.json.ReactionData;
 import discord4j.rest.util.Color;
+import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Mono;
+import se.skaegg.discordbot.configuration.BotConfiguration;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -10,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Friday implements EventHandler{
+
 
     @Override
     public Mono<Void> process(Message eventMessage) {
@@ -41,7 +49,9 @@ public class Friday implements EventHandler{
                 .flatMap(Message::getChannel)
                 .flatMap(channel -> {
                     if (diff >= 0) {
-                        return channel.createMessage(finalTimeLeft);
+                        return channel.createMessage(finalTimeLeft)
+                                .flatMap(msg -> msg.addReaction(
+                                        ReactionEmoji.custom(Snowflake.of("781224556429312001"), "zlatanrage", false)));
                     }
                     else {
                         return channel.createEmbed(spec ->

@@ -1,6 +1,0 @@
-token=#Discord Bot Token
-logging.config=file:#Path to logback-spring.xml
-bolaget.openhours.storeid=#StoreId of the store
-bolaget.api.token=#Api token for the API account at api-portal.systembolaget.se
-
-
