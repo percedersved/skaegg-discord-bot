@@ -14,7 +14,8 @@ public class Help implements EventHandler {
                 "!codenames - Skapar en länk för Codenames på horsepaste.com\n" +
                 "!lag [Namn kommaseparerat] - Slumpar fram 2 lag utifrån namnen som angivits\n" +
                 "!lagvoice - Tar alla namn som är i någon voicekanal och slumpar 2 lag\n" +
-                "!fredag - Är det fredag?";
+                "!fredag - Är det fredag?\n" +
+                "!film [Film- eller seriennamn på orginalspråk] - Visa information om film/serie från OMDB api";
 
         return Mono.just(eventMessage)
                 .filter(message -> message.getAuthor().map(user -> !user.isBot()).orElse(false))
