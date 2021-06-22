@@ -72,7 +72,7 @@ public class MovieSearch {
                         return channel.createEmbed(spec ->
                                 spec.setColor(Color.of(90, 130, 180))
                                         .setTitle(title)
-                                        .setImage(imageUrl)
+                                        .setImage(imageUrl.equals("N/A") ? "" : imageUrl)
                                         .addField("Handling", description, true)
                                         .addField("Övrigt", otherInfo, true)
                                         .setUrl(imdbLink));
