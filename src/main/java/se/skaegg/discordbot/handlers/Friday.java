@@ -9,6 +9,7 @@ import discord4j.discordjson.json.ReactionData;
 import discord4j.rest.util.Color;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Mono;
+import se.skaegg.discordbot.clients.TenorRandomClient;
 import se.skaegg.discordbot.configuration.BotConfiguration;
 
 import java.time.DayOfWeek;
@@ -57,6 +58,7 @@ public class Friday implements EventHandler{
                         return channel.createEmbed(spec ->
                                 spec.setColor(Color.of(90, 130, 180))
                                     .setTitle("Det är FREDAG!!")
+                                    .setImage(new TenorRandomClient().process("its%20friday"))
                                     .setDescription("(╯°□°）╯︵ ┻━┻"));
                     }
                 })
