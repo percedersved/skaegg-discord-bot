@@ -84,6 +84,19 @@
 			<artifactId>javafx-controls</artifactId>
 			<version>16</version>
 		</dependency>
+		<!--	Needed for error mail from logback	-->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.7</version>
+		</dependency>
+		<!--	Needed for error mail from logback	-->
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>activation</artifactId>
+			<version>1.1.1</version>
+			<scope>runtime</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
