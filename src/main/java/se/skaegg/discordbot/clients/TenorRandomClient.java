@@ -1,18 +1,14 @@
 package se.skaegg.discordbot.clients;
 
-import org.slf4j.LoggerFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import reactor.netty.http.client.HttpClient;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 
 public class TenorRandomClient
 {
     @Value("${tenor.api.token}")
     String token;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TenorRandomClient.class);
 
     public String process(final String searchWord) {
 
@@ -32,7 +28,6 @@ public class TenorRandomClient
         final JSONArray media = resultsZero.getJSONArray("media");
         final JSONObject mediaZero = media.getJSONObject(0);
         final JSONObject gif = mediaZero.getJSONObject("gif");
-        final String gifUrl = gif.getString("url");
-        return gifUrl;
+        return gif.getString("url");
     }
 }
