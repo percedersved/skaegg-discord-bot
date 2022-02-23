@@ -4,12 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import se.skaegg.discordbot.handlers.*;
+import se.skaegg.discordbot.jpa.TimerRepository;
 
-import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -29,6 +30,9 @@ public class MessageListener implements EventListener<MessageCreateEvent> {
     @Value("${omdb.api.token}")
     String omdbToken;
 
+    @Autowired
+    TimerRepository timerRepository;
+
     @Override
     public Class<MessageCreateEvent> getEventType() {
         return MessageCreateEvent.class;
@@ -46,6 +50,10 @@ public class MessageListener implements EventListener<MessageCreateEvent> {
         commands.put("!bolagetöppet", () -> new BolagetOpeningHours(storeId, token).process(event.getMessage()));
         commands.put("!hjälp", () -> new Help().process(event.getMessage()));
         commands.put("!fredag", () -> new Friday().process(event.getMessage()));
+        commands.put("!nynedräkning", () -> new Timer(timerRepository).process(event.getMessage()));
+        commands.put("!nedräkningar", () -> new Timer(timerRepository).listAllTimers(event.getMessage()));
+        commands.put("!nedräkning", () -> new Timer(timerRepository).checkTimer(event.getMessage()));
+        commands.put("!tabortnedräkning", () -> new Timer(timerRepository).deleteTimer(event.getMessage()));
         commands.put("!film", () -> {
             try {
                 return new MovieSearch(omdbToken).process(event.getMessage());
