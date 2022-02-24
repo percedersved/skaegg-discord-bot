@@ -1,6 +1,7 @@
 package se.skaegg.discordbot.handlers;
 
 import discord4j.core.object.entity.Message;
+import discord4j.rest.util.Color;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import se.skaegg.discordbot.jpa.TimerEntity;
@@ -17,6 +18,7 @@ import java.util.regex.Pattern;
 public class Timer implements EventHandler{
 
     TimerRepository timerRepository;
+    private static final String ERROR_MESSAGE = "Tyvärr nåt gick fel";
 
     public Timer(TimerRepository timerRepository) {
         this.timerRepository = timerRepository;
@@ -30,6 +32,8 @@ public class Timer implements EventHandler{
 
         String timerKey = null;
         String timerDateTimeString = null;
+        boolean timerAlreadyExists = false;
+        boolean noKeyAdded = false;
         Pattern pattern = Pattern.compile("(.*),\\s*(.*)");
         Matcher matcher = pattern.matcher(timerFormatted);
         if (matcher.find()) {
@@ -38,22 +42,44 @@ public class Timer implements EventHandler{
         }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        assert timerDateTimeString != null;
         LocalDateTime timerDateTime = LocalDateTime.parse(timerDateTimeString, formatter);
 
         TimerEntity timer = new TimerEntity();
         timer.setKey(timerKey);
         timer.setTimeDateTime(timerDateTime);
 
-        timerRepository.save(timer);
+
+        if (!timerRepository.findByTimerKey(timerFormatted).isEmpty()) {
+            timerAlreadyExists = true;
+        }
+        else if (timerKey.isBlank() || timerDateTimeString.isBlank()) {
+            noKeyAdded = true;
+        }
+        else {
+            timerRepository.save(timer);
+        }
 
         String finalTimerKey = timerKey;
         String finalTimerDateTimeString = timerDateTimeString;
+        boolean finalTimerAlreadyExists = timerAlreadyExists;
+        boolean finalNoKeyAdded = noKeyAdded;
         return Mono.just(eventMessage)
                 .filter(message -> message.getAuthor().map(user -> !user.isBot()).orElse(false))
                 .flatMap(Message::getChannel)
-                .flatMap(channel -> channel.createMessage("Timer with key " + finalTimerKey + " and expiration date " + finalTimerDateTimeString + " was added"))
+                .flatMap(channel -> {
+                    if (finalTimerAlreadyExists) {
+                        return channel.createMessage("Det finns redan en nedräkning med det namnet, testa ett annat namn");
+                    }
+                    else if (finalNoKeyAdded) {
+                        return channel.createMessage("Du måste ange både ett namn på nedräkningen följt av komma och ett datum i formatet yyyy-MM-dd HH:mm");
+                    }
+                    else {
+                        return channel.createMessage("Nedräkning med namn " + finalTimerKey + " och datum " + finalTimerDateTimeString + " har lagts till");
+                    }
+                })
                 .onErrorResume(throwable -> eventMessage.getChannel()
-                        .flatMap(messageChannel -> messageChannel.createMessage("Tyvärr, nåt gick fel.")))
+                        .flatMap(messageChannel -> messageChannel.createMessage(ERROR_MESSAGE)))
                 .then();
     }
 
@@ -61,39 +87,48 @@ public class Timer implements EventHandler{
     public Mono<Void> checkTimer(Message eventMessage) {
         String askedTimer = eventMessage.getContent().replace("!nedräkning ", "");
         List<TimerEntity> timers = timerRepository.findByTimerKey(askedTimer);
+        String timeLeft = null;
+        TimerEntity timer = null;
+        long diff = 0;
 
-        TimerEntity timer = timers.get(0);
-        LocalDateTime expirationDate = timer.getTimeDateTime();
+
+        if (!timers.isEmpty()) {
+            timer = timers.get(0);
+            LocalDateTime expirationDate = timer.getTimeDateTime();
+
+            Duration duration = Duration.between(LocalDateTime.now(), expirationDate);
+            diff = duration.toMinutes();
 
 
-        Duration duration = Duration.between(LocalDateTime.now(), expirationDate);
-        long diff = duration.toMinutes();
-
-        String timeLeft;
-        if (diff >= 1440) {
-            timeLeft = diff/24/60 + " dagar, " + diff/60%24 + "h, " + diff%60 + "m";
+            if (diff >= 1440) {
+                timeLeft = diff / 24 / 60 + " dagar, " + diff / 60 % 24 + "h, " + diff % 60 + "m";
+            } else if (diff >= 60) {
+                timeLeft = diff / 60 + "h, " + diff % 60 + "m";
+            } else {
+                timeLeft = diff + "m";
+            }
+            timeLeft = timeLeft + " kvar till " + timer.getKey();
         }
-        else if (diff >= 60) {
-            timeLeft = diff/60 + "h, " + diff%60 + "m";
-        }
-        else {
-            timeLeft = diff + "m";
-        }
 
-        final String finalTimeLeft = timeLeft + " kvar till " + timer.getKey();
 
+        long finalDiff = diff;
+        TimerEntity finalTimer = timer;
+        String finalTimeLeft = timeLeft;
         return Mono.just(eventMessage)
                 .filter(message -> message.getAuthor().map(user -> !user.isBot()).orElse(false))
                 .flatMap(Message::getChannel)
                 .flatMap(channel -> {
-                    if (diff >= 0) {
+                    if (finalDiff == 0 || finalTimer == null) {
+                        return channel.createMessage("Det finns ingen nedräkning med det namnet");
+                    }
+                    else if (finalDiff >= 0) {
                         return channel.createMessage(finalTimeLeft);
                     } else {
-                        return channel.createMessage("Timer passerad");
+                        return channel.createMessage("Nedräkning passerad");
                     }
                 })
                 .onErrorResume(throwable -> eventMessage.getChannel()
-                        .flatMap(messageChannel -> messageChannel.createMessage("Tyvärr, nåt gick fel.")))
+                        .flatMap(messageChannel -> messageChannel.createMessage(ERROR_MESSAGE)))
                 .then();
 
     }
@@ -118,9 +153,13 @@ public class Timer implements EventHandler{
         return Mono.just(eventMessage)
                 .filter(message -> message.getAuthor().map(user -> !user.isBot()).orElse(false))
                 .flatMap(Message::getChannel)
-                .flatMap(channel -> channel.createMessage("Available timers are: \n" + availableTimers))
+                .flatMap(channel -> channel.createEmbed(spec ->
+                spec.setColor(Color.of(90, 130, 180))
+                        .setTitle("Nedräkningar")
+                        .setDescription(availableTimers)
+                        ))
                 .onErrorResume(throwable -> eventMessage.getChannel()
-                        .flatMap(messageChannel -> messageChannel.createMessage("Tyvärr, nåt gick fel.")))
+                        .flatMap(messageChannel -> messageChannel.createMessage(ERROR_MESSAGE)))
                 .then();
     }
 
@@ -128,15 +167,30 @@ public class Timer implements EventHandler{
     public Mono<Void> deleteTimer(Message eventMessage) {
         String idToDeleteString = eventMessage.getContent().replace("!tabortnedräkning ", "");
         Integer idToDelete = Integer.parseInt(idToDeleteString);
+        boolean timerNotPresent = false;
+        String timerNotPresentString = "Det finns ingen nedräkning med det IDt";
 
-        timerRepository.deleteById(idToDelete);
+        if (timerRepository.findById(idToDelete).isPresent()) {
+            timerRepository.deleteById(idToDelete);
+        }
+        else {
+            timerNotPresent = true;
+        }
 
+        boolean finalTimerNotPresent = timerNotPresent;
         return Mono.just(eventMessage)
                 .filter(message -> message.getAuthor().map(user -> !user.isBot()).orElse(false))
                 .flatMap(Message::getChannel)
-                .flatMap(channel -> channel.createMessage("Timer with ID " + idToDelete + " was deleted"))
+                .flatMap(channel -> {
+                    if (finalTimerNotPresent) {
+                        return channel.createMessage(timerNotPresentString);
+                    }
+                    else {
+                        return channel.createMessage("Nedräkning med ID " + idToDelete + " raderades");
+                    }
+                })
                 .onErrorResume(throwable -> eventMessage.getChannel()
-                        .flatMap(messageChannel -> messageChannel.createMessage("Tyvärr, nåt gick fel.")))
+                        .flatMap(messageChannel -> messageChannel.createMessage(ERROR_MESSAGE)))
                 .then();
     }
 }
