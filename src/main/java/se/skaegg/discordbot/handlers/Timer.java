@@ -1,6 +1,8 @@
 package se.skaegg.discordbot.handlers;
 
+import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.rest.util.Color;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -11,6 +13,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,7 +51,9 @@ public class Timer implements EventHandler{
         TimerEntity timer = new TimerEntity();
         timer.setKey(timerKey);
         timer.setTimeDateTime(timerDateTime);
-
+        timer.setProcessed(false);
+        Snowflake originChannel = Objects.requireNonNull(eventMessage.getChannel().doOnSuccess(MessageChannel::getId).block()).getId();
+        timer.setChannelId(originChannel.asString());
 
         if (!timerRepository.findByTimerKey(timerFormatted).isEmpty()) {
             timerAlreadyExists = true;

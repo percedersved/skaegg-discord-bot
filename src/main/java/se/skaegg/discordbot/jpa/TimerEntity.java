@@ -20,6 +20,12 @@ public class TimerEntity {
     @Column(name = "timer_date_time")
     LocalDateTime timeDateTime;
 
+    @Column(name = "origin_channel_id")
+    String channelId;
+
+    @Column(name = "processed")
+    Boolean processed;
+
 
     public Integer getId() {
         return id;
@@ -43,5 +49,22 @@ public class TimerEntity {
 
     public void setTimeDateTime(LocalDateTime timeDateTime) {
         this.timeDateTime = timeDateTime;
+    }
+
+    public Boolean getProcessed() {
+        return processed;
+    }
+
+    public void setProcessed(Boolean processed) {
+        this.processed = processed;
+    }
+
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
     }
 }
