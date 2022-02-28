@@ -30,7 +30,7 @@ public class CheckTimersConfiguration {
     @Autowired
     GatewayDiscordClient client;
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "5 * * * * *")
     public void ScheduleTimerCheck() {
         List<TimerEntity> timers = timerRepository.findAll();
 

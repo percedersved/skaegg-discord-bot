@@ -33,48 +33,49 @@ public class Timer implements EventHandler{
 
         String timerFormatted = eventMessage.getContent().replace("!nynedräkning ", "");
 
-        String timerKey = null;
-        String timerDateTimeString = null;
-        boolean timerAlreadyExists = false;
-        boolean noKeyAdded = false;
-        Pattern pattern = Pattern.compile("(.*),\\s*(.*)");
-        Matcher matcher = pattern.matcher(timerFormatted);
-        if (matcher.find()) {
-            timerKey = matcher.group(1);
-            timerDateTimeString = matcher.group(2);
-        }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        assert timerDateTimeString != null;
-        LocalDateTime timerDateTime = LocalDateTime.parse(timerDateTimeString, formatter);
-
-        TimerEntity timer = new TimerEntity();
-        timer.setKey(timerKey);
-        timer.setTimeDateTime(timerDateTime);
-        timer.setProcessed(false);
-        Snowflake originChannel = Objects.requireNonNull(eventMessage.getChannel().doOnSuccess(MessageChannel::getId).block()).getId();
-        timer.setChannelId(originChannel.asString());
-
-        if (!timerRepository.findByTimerKey(timerFormatted).isEmpty()) {
-            timerAlreadyExists = true;
-        }
-        else if (timerKey.isBlank() || timerDateTimeString.isBlank()) {
-            noKeyAdded = true;
-        }
-        else {
-            timerRepository.save(timer);
-        }
-
-        String finalTimerKey = timerKey;
-        String finalTimerDateTimeString = timerDateTimeString;
-        boolean finalTimerAlreadyExists = timerAlreadyExists;
-        boolean finalNoKeyAdded = noKeyAdded;
         return Mono.just(eventMessage)
                 .filter(message -> message.getAuthor().map(user -> !user.isBot()).orElse(false))
                 .flatMap(Message::getChannel)
                 .flatMap(channel -> {
+                    Pattern pattern = Pattern.compile("(.*),\\s*(.*)");
+                    Matcher matcher = pattern.matcher(timerFormatted);
+
+                    String timerKey = null;
+                    String timerDateTimeString = null;
+                    boolean timerAlreadyExists = false;
+                    boolean noKeyAdded = false;
+
+                    if (matcher.find()) {
+                        timerKey = matcher.group(1);
+                        timerDateTimeString = matcher.group(2);
+                    }
+
+                    if (!timerRepository.findByKeyIgnoreCase(timerKey).isEmpty()) {
+                        timerAlreadyExists = true;
+                    }
+                    else if ((timerKey == null || timerKey.isBlank()) || timerDateTimeString.isBlank()) {
+                        noKeyAdded = true;
+                    }
+                    else {
+                        // Do all the DB stuff
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                        LocalDateTime timerDateTime = LocalDateTime.parse(timerDateTimeString, formatter);
+                        TimerEntity timer = new TimerEntity();
+                        timer.setKey(timerKey);
+                        timer.setTimeDateTime(timerDateTime);
+                        timer.setProcessed(false);
+                        Snowflake originChannel = Objects.requireNonNull(eventMessage.getChannel().doOnSuccess(MessageChannel::getId).block()).getId();
+                        timer.setChannelId(originChannel.asString());
+                        timerRepository.save(timer);
+                    }
+
+                    String finalTimerKey = timerKey;
+                    String finalTimerDateTimeString = timerDateTimeString;
+                    boolean finalTimerAlreadyExists = timerAlreadyExists;
+                    boolean finalNoKeyAdded = noKeyAdded;
                     if (finalTimerAlreadyExists) {
-                        return channel.createMessage("Det finns redan en nedräkning med det namnet, testa ett annat namn");
+                        return channel.createMessage("Doh! Det finns redan en nedräkning med det namnet, testa ett annat namn");
                     }
                     else if (finalNoKeyAdded) {
                         return channel.createMessage("Du måste ange både ett namn på nedräkningen följt av komma och ett datum i formatet yyyy-MM-dd HH:mm");
@@ -91,7 +92,7 @@ public class Timer implements EventHandler{
 
     public Mono<Void> checkTimer(Message eventMessage) {
         String askedTimer = eventMessage.getContent().replace("!nedräkning ", "");
-        List<TimerEntity> timers = timerRepository.findByTimerKey(askedTimer);
+        List<TimerEntity> timers = timerRepository.findByKeyIgnoreCase(askedTimer);
         String timeLeft = null;
         TimerEntity timer = null;
         long diff = 0;
