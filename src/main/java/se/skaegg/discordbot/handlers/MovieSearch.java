@@ -26,7 +26,7 @@ public class MovieSearch {
 
     public Mono<Void> process(Message eventMessage) throws JsonProcessingException {
 
-        String searchFormatted = eventMessage.getContent().replace("!film ", "");
+        String searchFormatted = eventMessage.getContent().replaceAll("(?i)!film ", "");
 
         String queryParams = apiToken + "&t=" + URLEncoder.encode(searchFormatted, Charset.defaultCharset());
 

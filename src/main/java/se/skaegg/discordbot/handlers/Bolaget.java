@@ -15,7 +15,7 @@ public class Bolaget implements EventHandler{
     @Override
     public Mono<Void> process(Message eventMessage) {
 
-        String queryParam = eventMessage.getContent().replace("!bolaget ", "");
+        String queryParam = eventMessage.getContent().replaceAll("(?i)!bolaget ", "");
 
         String image;
         String productDescription;

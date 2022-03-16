@@ -31,7 +31,7 @@ public class Timer implements EventHandler{
     @Override
     public Mono<Void> process(Message eventMessage) {
 
-        String timerFormatted = eventMessage.getContent().replace("!nynedräkning ", "");
+        String timerFormatted = eventMessage.getContent().replaceAll("(?i)!nynedräkning ", "");
 
 
         return Mono.just(eventMessage)
@@ -91,7 +91,7 @@ public class Timer implements EventHandler{
 
 
     public Mono<Void> checkTimer(Message eventMessage) {
-        String askedTimer = eventMessage.getContent().replace("!nedräkning ", "");
+        String askedTimer = eventMessage.getContent().replaceAll("(?i)!nedräkning ", "");
         List<TimerEntity> timers = timerRepository.findByKeyIgnoreCase(askedTimer);
         String timeLeft = null;
         TimerEntity timer = null;
@@ -141,7 +141,7 @@ public class Timer implements EventHandler{
 
 
     public Mono<Void> listAllTimers(Message eventMessage) {
-        List<TimerEntity> timers = timerRepository.findAll();
+        List<TimerEntity> timers = timerRepository.findByProcessed(false);
 
         StringBuilder sb = new StringBuilder();
         sb.append("Namn")
@@ -171,7 +171,7 @@ public class Timer implements EventHandler{
 
 
     public Mono<Void> deleteTimer(Message eventMessage) {
-        String idToDeleteString = eventMessage.getContent().replace("!tabortnedräkning ", "");
+        String idToDeleteString = eventMessage.getContent().replaceAll("(?i)!tabortnedräkning ", "");
         Integer idToDelete = Integer.parseInt(idToDeleteString);
         boolean timerNotPresent = false;
         String timerNotPresentString = "Det finns ingen nedräkning med det IDt";

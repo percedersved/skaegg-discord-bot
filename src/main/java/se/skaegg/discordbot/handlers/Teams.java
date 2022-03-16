@@ -39,7 +39,7 @@ public class Teams implements EventHandler{
 
     public static List<String> setUpTeams(String players) {
 
-        String playersFormatted = players.replace("!lag ", "");
+        String playersFormatted = players.replaceAll("(?i)!lag ", "");
         playersFormatted = playersFormatted.replace(" ", "");
         List<String> playersList = Arrays.asList(playersFormatted.split(",", -1));
 
