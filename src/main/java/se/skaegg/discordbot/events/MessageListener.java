@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 import se.skaegg.discordbot.handlers.*;
 import se.skaegg.discordbot.jpa.TimerRepository;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -29,6 +30,12 @@ public class MessageListener implements EventListener<MessageCreateEvent> {
 
     @Value("${omdb.api.token}")
     String omdbToken;
+
+    @Value("${restaurant.api.token}")
+    String restaurantToken;
+
+    @Value("${restaurant.api.url}")
+    String restaurantUrl;
 
     @Autowired
     TimerRepository timerRepository;
@@ -54,6 +61,14 @@ public class MessageListener implements EventListener<MessageCreateEvent> {
         commands.put("!nedräkningar", () -> new Timer(timerRepository).listAllTimers(event.getMessage()));
         commands.put("!nedräkning", () -> new Timer(timerRepository).checkTimer(event.getMessage()));
         commands.put("!tabortnedräkning", () -> new Timer(timerRepository).deleteTimer(event.getMessage()));
+        commands.put("!lunchtips", () -> {
+            try {
+                return new Lunch(restaurantToken, restaurantUrl).process(event.getMessage());
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+                return null;
+            }
+        });
         commands.put("!film", () -> {
             try {
                 return new MovieSearch(omdbToken).process(event.getMessage());

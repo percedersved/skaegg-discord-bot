@@ -1,6 +1,7 @@
 package se.skaegg.discordbot.handlers;
 
 import discord4j.core.object.entity.Message;
+import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
 import org.apache.commons.lang.time.DateUtils;
 import org.json.JSONArray;
@@ -76,17 +77,20 @@ public class BolagetOpeningHours implements EventHandler{
 
         String openingHoursString = sb.toString();
 
+        EmbedCreateSpec embed = EmbedCreateSpec.builder()
+                .color(Color.of(90, 130, 180))
+                .title("Öppettider för Bollis i Norrtälje :beers:")
+                .description(openingHoursString)
+                .build();
+
 
         return Mono.just(eventMessage)
                 .filter(message -> message.getAuthor().map(user -> !user.isBot()).orElse(false))
                 .flatMap(Message::getChannel)
-                .flatMap(channel -> channel.createEmbed(spec ->
-                        spec.setColor(Color.of(90, 130, 180))
-                            .setDescription(openingHoursString)
-                            .setTitle("Öppettider för Bollis i Norrtälje :beers:")))
+                .flatMap(channel -> channel.createMessage(embed)
                 .onErrorResume(throwable -> eventMessage.getChannel()
                         .flatMap(messageChannel -> messageChannel.createMessage("Äsch, nu kraschade nåt, Testa igen vettja!")))
-                .then();
+                .then());
 
     }
 

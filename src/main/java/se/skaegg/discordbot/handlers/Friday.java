@@ -5,6 +5,7 @@ import discord4j.core.GatewayDiscordClient;
 import discord4j.core.object.entity.GuildEmoji;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.reaction.ReactionEmoji;
+import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.discordjson.json.ReactionData;
 import discord4j.rest.util.Color;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,13 @@ public class Friday implements EventHandler{
 
         final String finalTimeLeft = timeLeft + " kvar till fredag <:zlatanrage:781224556429312001>";
 
+        EmbedCreateSpec itsFridayEmbed = EmbedCreateSpec.builder()
+                .color(Color.of(90, 130, 180))
+                .title("Det är FREDAG!!")
+                .image(new TenorRandomClient().process("its%20friday"))
+                .description("(╯°□°）╯︵ ┻━┻")
+                .build();
+
 
         return Mono.just(eventMessage)
                 .filter(message -> message.getAuthor().map(user -> !user.isBot()).orElse(false))
@@ -55,11 +63,7 @@ public class Friday implements EventHandler{
                                         ReactionEmoji.custom(Snowflake.of("781224556429312001"), "zlatanrage", false)));
                     }
                     else {
-                        return channel.createEmbed(spec ->
-                                spec.setColor(Color.of(90, 130, 180))
-                                    .setTitle("Det är FREDAG!!")
-                                    .setImage(new TenorRandomClient().process("its%20friday"))
-                                    .setDescription("(╯°□°）╯︵ ┻━┻"));
+                        return channel.createMessage(itsFridayEmbed);
                     }
                 })
                 .onErrorResume(throwable -> eventMessage.getChannel()
