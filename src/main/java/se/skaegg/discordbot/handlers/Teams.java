@@ -1,6 +1,7 @@
 package se.skaegg.discordbot.handlers;
 
 import discord4j.core.object.entity.Message;
+import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
 import reactor.core.publisher.Mono;
 
@@ -20,19 +21,21 @@ public class Teams implements EventHandler{
 
         final var IMAGE_URL_TEAMS = "https://static-cdn.jtvnw.net/emoticons/v1/166266/3.0";
 
+        EmbedCreateSpec embed = EmbedCreateSpec.builder()
+                .color(Color.of(90, 130, 180))
+                .addField("----- Lag Röd -----", teamRed, true)
+                .addField("----- Lag Blå -----", teamBlue, true)
+                .image(IMAGE_URL_TEAMS)
+                .title("Lag")
+                .build();
+
         return Mono.just(eventMessage)
                 .filter(message -> message.getAuthor().map(user -> !user.isBot()).orElse(false))
                 .flatMap(Message::getChannel)
                 .flatMap(channel ->
-                        channel.createEmbed(spec ->
-                                spec.setColor(Color.of(90, 130, 180))
-                                    .setImage(IMAGE_URL_TEAMS)
-                                    .addField("----- Lag Röd -----", teamRed, true)
-                                    .addField("----- Lag Blå -----", teamBlue, true)
-                                    .setTitle("Lag")))
+                        channel.createMessage(embed))
                 .onErrorResume(throwable -> eventMessage.getChannel()
                         .flatMap(messageChannel -> messageChannel.createMessage("Ooops nu gick något fel, kanske angav du för få deltagare? Testa igen vettja!")))
-
                 .then();
     }
 

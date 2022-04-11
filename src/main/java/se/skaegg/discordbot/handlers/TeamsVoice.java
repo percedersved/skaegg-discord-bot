@@ -2,6 +2,7 @@ package se.skaegg.discordbot.handlers;
 
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
+import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,13 @@ public class TeamsVoice implements EventHandler {
 
         final var IMAGE_URL_TEAMS = "https://static-cdn.jtvnw.net/emoticons/v1/166266/3.0";
 
-
+        EmbedCreateSpec embed = EmbedCreateSpec.builder()
+                .color(Color.of(90, 130, 180))
+                .addField("----- Lag Röd -----", teamRed, true)
+                .addField("----- Lag Blå -----", teamBlue, true)
+                .image(IMAGE_URL_TEAMS)
+                .title("Lag")
+                .build();
 
         return Mono.just(eventMessage)
                 .filter(message -> message.getAuthor().map(user -> !user.isBot()).orElse(false))
@@ -50,12 +57,7 @@ public class TeamsVoice implements EventHandler {
                         return channel.createMessage("Tyvärr, Det är ingen som är i en röstkanal och vill leka <:sadmudd:780443021267042335><:koerdittjaeklaboegrace:814187249288872016>");
                     }
                     else {
-                        return channel.createEmbed(spec ->
-                                spec.setColor(Color.of(90, 130, 180))
-                                    .setImage(IMAGE_URL_TEAMS)
-                                    .addField("Lag Röd", teamRed, true)
-                                    .addField("Lag Blå", teamBlue, true)
-                                    .setTitle("Lag"));
+                        return channel.createMessage(embed);
                     }
                 })
                 .onErrorResume(throwable -> eventMessage.getChannel()
