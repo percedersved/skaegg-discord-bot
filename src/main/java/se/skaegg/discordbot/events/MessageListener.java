@@ -61,14 +61,7 @@ public class MessageListener implements EventListener<MessageCreateEvent> {
         commands.put("!nedräkningar", () -> new Timer(timerRepository).listAllTimers(event.getMessage()));
         commands.put("!nedräkning", () -> new Timer(timerRepository).checkTimer(event.getMessage()));
         commands.put("!tabortnedräkning", () -> new Timer(timerRepository).deleteTimer(event.getMessage()));
-        commands.put("!lunchtips", () -> {
-            try {
-                return new Lunch(restaurantToken, restaurantUrl).process(event.getMessage());
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-                return null;
-            }
-        });
+        commands.put("!lunchtips", () -> new Lunch(restaurantToken, restaurantUrl).process(event.getMessage()));
         commands.put("!film", () -> {
             try {
                 return new MovieSearch(omdbToken).process(event.getMessage());
