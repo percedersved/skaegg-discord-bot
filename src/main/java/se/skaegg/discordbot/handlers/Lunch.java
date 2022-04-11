@@ -11,7 +11,6 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 import se.skaegg.discordbot.dto.Restaurant;
 
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -31,7 +30,7 @@ public class Lunch {
         this.restaurantUrl = restaurantUrl;
     }
 
-    public Mono<Void> process(Message eventMessage) throws URISyntaxException {
+    public Mono<Void> process(Message eventMessage) {
 
         String searchFormatted = eventMessage.getContent().replaceAll("(?i)!lunchtips\\s*", "");
         // URL encode the city name
@@ -49,7 +48,6 @@ public class Lunch {
                 .block();
 
         List<Restaurant> restaurantsResult;
-
         try {
             restaurantsResult = MAPPER.readValue(response, new TypeReference<>() {});
         }
@@ -58,18 +56,25 @@ public class Lunch {
             return Mono.empty();
         }
 
-        StringBuilder sb = new StringBuilder();
+        Restaurant restaurant = restaurantsResult.get(0);
 
-        //Right now there will always just be 1 json object in the response but possible to add query param to get more. So this is just preparing for that
-        for (Restaurant restaurant : restaurantsResult) {
-            sb.append(restaurant.toString());
-            sb.append("\n\n");
-        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("Betyg: ");
+        sb.append(restaurant.getRating());
+        sb.append("\n");
+        sb.append("Adress: ");
+        sb.append(restaurant.getAddress());
+        sb.append("\n\n");
+        String restaurantDescription = sb.toString();
+
+        String photoUrl = restaurant.getPhoto() != null ? restaurant.getPhoto() : "";
 
         EmbedCreateSpec embed = EmbedCreateSpec.builder()
                 .color(Color.of(90, 130, 180))
-                .title("Lunchtips")
-                .description(sb.toString())
+                .title(restaurant.getName())
+                .url(restaurant.getUrl())
+                .image(photoUrl)
+                .description(restaurantDescription)
                 .build();
 
         return Mono.just(eventMessage)

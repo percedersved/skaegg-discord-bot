@@ -3,6 +3,7 @@ package se.skaegg.discordbot.handlers;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -156,14 +157,16 @@ public class Timer implements EventHandler{
         }
         String availableTimers = sb.toString();
 
+        EmbedCreateSpec embed = EmbedCreateSpec.builder()
+                .color(Color.of(90, 130, 180))
+                .title("Nedräkningar")
+                .description(availableTimers)
+                .build();
+
         return Mono.just(eventMessage)
                 .filter(message -> message.getAuthor().map(user -> !user.isBot()).orElse(false))
                 .flatMap(Message::getChannel)
-                .flatMap(channel -> channel.createEmbed(spec ->
-                spec.setColor(Color.of(90, 130, 180))
-                        .setTitle("Nedräkningar")
-                        .setDescription(availableTimers)
-                        ))
+                .flatMap(channel -> channel.createMessage(embed))
                 .onErrorResume(throwable -> eventMessage.getChannel()
                         .flatMap(messageChannel -> messageChannel.createMessage(ERROR_MESSAGE)))
                 .then();
