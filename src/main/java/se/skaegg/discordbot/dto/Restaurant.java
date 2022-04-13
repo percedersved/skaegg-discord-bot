@@ -3,10 +3,17 @@ package se.skaegg.discordbot.dto;
 public class Restaurant {
 
     String name;
-    double rating;
-    String address;
     String url;
+    String openingHours;
+    String address;
+    String phone;
+    String pricing;
+    String website;
     String photo;
+    String rating;
+    String reviewText;
+    String reviewByline;
+
 
     public String getName() {
         return name;
@@ -16,16 +23,16 @@ public class Restaurant {
         this.name = name;
     }
 
-    public double getRating() {
-        return rating;
+    public String getRating() {
+        return rating != null ? ":star: " + rating : "";
     }
 
-    public void setRating(double rating) {
+    public void setRating(String rating) {
         this.rating = rating;
     }
 
     public String getAddress() {
-        return address;
+        return address != null ? ":homes: " + address : "";
     }
 
     public void setAddress(String address) {
@@ -33,7 +40,7 @@ public class Restaurant {
     }
 
     public String getUrl() {
-        return url;
+        return url != null ? url : "";
     }
 
     public void setUrl(String url) {
@@ -41,11 +48,59 @@ public class Restaurant {
     }
 
     public String getPhoto() {
-        return photo;
+        return photo != null ? photo : "";
     }
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    public String getOpeningHours() {
+        return openingHours != null ? ":clock1: " + openingHours : "";
+    }
+
+    public void setOpeningHours(String openingHours) {
+        this.openingHours = openingHours;
+    }
+
+    public String getPhone() {
+        return phone != null ? ":telephone: " + phone : "";
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getPricing() {
+        return pricing != null ? ":dollar: " + pricing : "";
+    }
+
+    public void setPricing(String pricing) {
+        this.pricing = pricing;
+    }
+
+    public String getWebsite() {
+        return website != null ? ":globe_with_meridians: " + website : "";
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    public String getReviewText() {
+        return reviewText != null ? reviewText : "";
+    }
+
+    public void setReviewText(String reviewText) {
+        this.reviewText = reviewText;
+    }
+
+    public String getReviewByline() {
+        return reviewByline != null ? reviewByline : "";
+    }
+
+    public void setReviewByline(String reviewByline) {
+        this.reviewByline = reviewByline;
     }
 
     @Override

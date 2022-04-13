@@ -11,7 +11,6 @@ import reactor.core.publisher.Mono;
 import se.skaegg.discordbot.handlers.*;
 import se.skaegg.discordbot.jpa.TimerRepository;
 
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;

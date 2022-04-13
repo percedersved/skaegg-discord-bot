@@ -47,6 +47,8 @@ public class Lunch {
                 .asString()
                 .block();
 
+        log.debug(response);
+
         List<Restaurant> restaurantsResult;
         try {
             restaurantsResult = MAPPER.readValue(response, new TypeReference<>() {});
@@ -58,23 +60,27 @@ public class Lunch {
 
         Restaurant restaurant = restaurantsResult.get(0);
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("Betyg: ");
-        sb.append(restaurant.getRating());
-        sb.append("\n");
-        sb.append("Adress: ");
-        sb.append(restaurant.getAddress());
-        sb.append("\n\n");
-        String restaurantDescription = sb.toString();
+        String leftColumnEmbed =
+                restaurant.getOpeningHours() + "\n" +
+                restaurant.getPricing();
 
-        String photoUrl = restaurant.getPhoto() != null ? restaurant.getPhoto() : "";
+        String rightColumnEmbed =
+                restaurant.getAddress() + "\n" +
+                restaurant.getPhone();
+
+        String footerEmbed =
+                restaurant.getReviewText() + "\n" +
+                restaurant.getReviewByline();
+
 
         EmbedCreateSpec embed = EmbedCreateSpec.builder()
                 .color(Color.of(90, 130, 180))
                 .title(restaurant.getName())
                 .url(restaurant.getUrl())
-                .image(photoUrl)
-                .description(restaurantDescription)
+                .addField(restaurant.getRating(), leftColumnEmbed, true)
+                .addField(restaurant.getWebsite(), rightColumnEmbed, true)
+                .image(restaurant.getPhoto())
+                .footer(footerEmbed, "")
                 .build();
 
         return Mono.just(eventMessage)
