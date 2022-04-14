@@ -21,7 +21,8 @@ public class Help implements EventHandler {
                 "`!nynedräkning [Namn på nedräkning, datum i format yyyy-MM-dd HH:mm]` - Lägger till nedräkning\n" +
                 "`!nedräkningar` - Listar nedräkningar med namn och ID\n" +
                 "`!tabortnedräkning [ID]` - Tar bort nedräkning\n" +
-                "`!lunchtips` - Tips på restaurang. Default är i Norrtälje. Möjligt att lägga till annan stad som parameter";
+                "`!restaurang` - Tips på restaurang. Default är i Norrtälje. Möjligt att lägga till annan ort som parameter\n" +
+                "`!restaurangduell` - Rösta på 2 olika slumpmässiga restauranger. Default är i Norrtälje. Möjligt att lägga till annan ort som parameter";
 
         EmbedCreateSpec embed = EmbedCreateSpec.builder()
                 .color(Color.of(90, 130, 180))

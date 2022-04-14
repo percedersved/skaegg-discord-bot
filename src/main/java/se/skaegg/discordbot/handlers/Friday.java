@@ -1,17 +1,12 @@
 package se.skaegg.discordbot.handlers;
 
 import discord4j.common.util.Snowflake;
-import discord4j.core.GatewayDiscordClient;
-import discord4j.core.object.entity.GuildEmoji;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.reaction.ReactionEmoji;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.discordjson.json.ReactionData;
 import discord4j.rest.util.Color;
-import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Mono;
 import se.skaegg.discordbot.clients.TenorRandomClient;
-import se.skaegg.discordbot.configuration.BotConfiguration;
 
 import java.time.DayOfWeek;
 import java.time.Duration;

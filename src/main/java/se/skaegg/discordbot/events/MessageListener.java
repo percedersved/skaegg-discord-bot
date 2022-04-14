@@ -31,10 +31,10 @@ public class MessageListener implements EventListener<MessageCreateEvent> {
     String omdbToken;
 
     @Value("${restaurant.api.token}")
-    String restaurantToken;
+    private String resturantToken;
 
     @Value("${restaurant.api.url}")
-    String restaurantUrl;
+    private String restaurantUrl;
 
     @Autowired
     TimerRepository timerRepository;
@@ -60,7 +60,8 @@ public class MessageListener implements EventListener<MessageCreateEvent> {
         commands.put("!nedräkningar", () -> new Timer(timerRepository).listAllTimers(event.getMessage()));
         commands.put("!nedräkning", () -> new Timer(timerRepository).checkTimer(event.getMessage()));
         commands.put("!tabortnedräkning", () -> new Timer(timerRepository).deleteTimer(event.getMessage()));
-        commands.put("!lunchtips", () -> new Lunch(restaurantToken, restaurantUrl).process(event.getMessage()));
+        commands.put("!restaurangduell", () -> new RestaurantDuel(resturantToken, restaurantUrl).process(event.getMessage()));
+        commands.put("!restaurang", () -> new RestaurantRandom(resturantToken, restaurantUrl).process(event.getMessage()));
         commands.put("!film", () -> {
             try {
                 return new MovieSearch(omdbToken).process(event.getMessage());
