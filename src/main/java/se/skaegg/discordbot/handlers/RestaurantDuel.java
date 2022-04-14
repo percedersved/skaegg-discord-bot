@@ -39,11 +39,16 @@ public class RestaurantDuel {
                 restaurantOne.getRating() + "\n" +
                 restaurantOne.getOpeningHours() + "\n" +
                 restaurantOne.getPricing();
+        // Check the column only contains whitespace, then add the special whitespace char to avoid crash
+        leftColumnEmbedROne = leftColumnEmbedROne.isBlank() ? whiteSpace : leftColumnEmbedROne;
 
         String rightColumnEmbedROne =
                 restaurantOne.getWebsite() + "\n" +
                 restaurantOne.getAddress() + "\n" +
                 restaurantOne.getPhone();
+        // Check the column only contains whitespace, then add the special whitespace char to avoid crash
+        rightColumnEmbedROne = rightColumnEmbedROne.isBlank() ? whiteSpace : rightColumnEmbedROne;
+
 
         String footerEmbedROne =
                 "\u200B\n" +
@@ -64,11 +69,15 @@ public class RestaurantDuel {
                 restaurantTwo.getRating() + "\n" +
                 restaurantTwo.getOpeningHours() + "\n" +
                 restaurantTwo.getPricing();
+        // Check the column only contains whitespace, then add the special whitespace char to avoid crash
+        leftColumnEmbedRTwo = leftColumnEmbedRTwo.isBlank() ? whiteSpace : leftColumnEmbedRTwo;
 
         String rightColumnEmbedRTwo =
                 restaurantTwo.getWebsite() + "\n" +
                 restaurantTwo.getAddress() + "\n" +
                 restaurantTwo.getPhone();
+        // Check the column only contains whitespace, then add the special whitespace char to avoid crash
+        rightColumnEmbedRTwo = rightColumnEmbedRTwo.isBlank() ? whiteSpace : rightColumnEmbedRTwo;
 
         String footerEmbedRTwo =
                 "\u200B\n" +
@@ -89,12 +98,12 @@ public class RestaurantDuel {
                 .filter(message -> message.getAuthor().map(user -> !user.isBot()).orElse(false))
                 .flatMap(Message::getChannel)
                 .flatMap(channel -> channel.createMessage(MessageCreateSpec.builder()
-                        .content("**Var vill du äta? :crossed_swords:**")
-                        .addEmbed(embedROne)
-                        .addEmbed(embedRTwo)
-                        .build())
-                        .flatMap(msg -> msg.addReaction(ReactionEmoji.unicode("🔴"))
-                                .then(msg.addReaction(ReactionEmoji.unicode("\uD83D\uDD35")))))
+                                .content("**Var vill du äta? :crossed_swords:**")
+                                .addEmbed(embedROne)
+                                .addEmbed(embedRTwo)
+                                .build())
+                .flatMap(msg -> msg.addReaction(ReactionEmoji.unicode("🔴"))
+                        .then(msg.addReaction(ReactionEmoji.unicode("\uD83D\uDD35")))))
                 .then();
     }
 }

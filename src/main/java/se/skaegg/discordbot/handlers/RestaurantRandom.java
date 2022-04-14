@@ -37,14 +37,18 @@ public class RestaurantRandom {
         Restaurant restaurant = restaurantList.get(0);
 
         String leftColumnEmbed =
-                restaurant.getRating() + whiteSpace + "\n" + // The \u200b whitespace is needed because otherwise it will crash if all of these are "" and the embed-field will be empty
+                restaurant.getRating() + "\n" +
                 restaurant.getOpeningHours() + "\n" +
                 restaurant.getPricing();
+        // Check the column only contains whitespace, then add the special whitespace char to avoid crash
+        leftColumnEmbed = leftColumnEmbed.isBlank() ? whiteSpace : leftColumnEmbed;
 
         String rightColumnEmbed =
-                restaurant.getWebsite() + whiteSpace + "\n" +
+                restaurant.getWebsite() + "\n" +
                 restaurant.getAddress() + "\n" +
                 restaurant.getPhone();
+        // Check the column only contains whitespace, then add the special whitespace char to avoid crash
+        rightColumnEmbed = rightColumnEmbed.isBlank() ? whiteSpace : rightColumnEmbed;
 
         String footerEmbed =
                 "\u200B\n" +

@@ -24,7 +24,7 @@ public class Restaurant {
     }
 
     public String getRating() {
-        return rating != null ? ":star: " + rating : "";
+        return rating != null ? ":star: " + rating : "\u200B"; // Returning unicode white space to make sure that th embed dosent crash if all fields in on embed-field is ""
     }
 
     public void setRating(String rating) {
@@ -80,7 +80,7 @@ public class Restaurant {
     }
 
     public String getWebsite() {
-        return website != null ? ":globe_with_meridians: " + website : "";
+        return website != null ? ":globe_with_meridians: " + website : ""; // Returning unicode white space to make sure that th embed dosent crash if all fields in on embed-field is ""
     }
 
     public void setWebsite(String website) {
