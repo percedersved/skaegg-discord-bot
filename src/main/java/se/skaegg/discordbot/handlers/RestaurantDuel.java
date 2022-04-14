@@ -59,8 +59,8 @@ public class RestaurantDuel {
                 .color(Color.of(221, 46, 68))
                 .title(":red_circle: " + restaurantOne.getName())
                 .url(restaurantOne.getUrl())
-                .addField(whiteSpace, leftColumnEmbedROne, true)
-                .addField(whiteSpace, rightColumnEmbedROne, true)
+                .addField("Information", leftColumnEmbedROne, true)
+                .addField("Kontakt", rightColumnEmbedROne, true)
                 .footer(footerEmbedROne, "")
                 .build();
 
@@ -88,8 +88,8 @@ public class RestaurantDuel {
                 .color(Color.of(85, 172, 238))
                 .title(":blue_circle: " + restaurantTwo.getName())
                 .url(restaurantTwo.getUrl())
-                .addField(whiteSpace, leftColumnEmbedRTwo, true)
-                .addField(whiteSpace, rightColumnEmbedRTwo, true)
+                .addField("Information", leftColumnEmbedRTwo, true)
+                .addField("Kontakt", rightColumnEmbedRTwo, true)
                 .footer(footerEmbedRTwo, "")
                 .build();
 

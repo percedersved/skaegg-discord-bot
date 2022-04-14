@@ -60,8 +60,8 @@ public class RestaurantRandom {
                 .color(Color.of(90, 130, 180))
                 .title(restaurant.getName())
                 .url(restaurant.getUrl())
-                .addField(whiteSpace, leftColumnEmbed, true)
-                .addField(whiteSpace, rightColumnEmbed, true)
+                .addField("Information", leftColumnEmbed, true)
+                .addField("Kontakt", rightColumnEmbed, true)
                 .image(restaurant.getPhoto())
                 .footer(footerEmbed, "")
                 .build();
